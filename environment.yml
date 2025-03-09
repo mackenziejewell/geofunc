@@ -1,4 +1,4 @@
-name: plot_simply
+name: geofunc
 channels:
   - conda-forge
   - defaults
@@ -481,4 +481,4 @@ dependencies:
   - zope=1.0=py312hecd8cb5_1
   - zope.interface=5.4.0=py312h6c40b1e_0
   - zstd=1.5.5=hc035e20_0
-prefix: /opt/anaconda3/envs/plot_simply
+prefix: /opt/anaconda3/envs/geofunc

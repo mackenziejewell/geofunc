@@ -1,5 +1,5 @@
-# plot_simply
-Functions for quicker use of common plotting tools, especially involving geographic plots
+# geofunc
+Functions for geographic analyses in python
 
 ### To build matching environment:
 
