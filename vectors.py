@@ -17,7 +17,7 @@ import pyproj
 
 # FUNCTIONS:
 #---------------------------------------------------------------------
-def project_vectors(projection, lon, lat, eastward = 1*units('m/s'), northward = 1*units('m/s')):
+def project_vectors(projection, lon, lat, eastward = 1*units('m/s'), northward = 1*units('m/s'), final_units = 'm/day'):
 
     """ Convert eastward, northward vector components to projected coordinate system
     INPUT:
@@ -26,6 +26,9 @@ def project_vectors(projection, lon, lat, eastward = 1*units('m/s'), northward =
     - northward: northward velocity component (with units)
     - lon: starting lon of vector (tail)
     - lat: starting lat of vector (tail)
+    - final_units: AS STRING, with slash used as in example, units to convert final vector components to (default: 'm/day')
+         * Distance component should be meters to match most standard projections
+
     OUTPUT:
     - tail: (x, y) projected coordinates of vector tail
     - tip: (x, y) projected coordinates of vector tip
@@ -41,7 +44,11 @@ def project_vectors(projection, lon, lat, eastward = 1*units('m/s'), northward =
     # bearing defined CW form northward
     #==================
     bearing = - (theta - 90 * units('degree'))
-    distance = S.to('m/day') * units('day')    # m traveled in a day
+
+    dist_units = final_units.split('/')[0]
+    time_units = final_units.split('/')[1]
+
+    distance = S.to(final_units) * units(time_units)    # dist traveled per desired time units
     #==================
     
     geod = pyproj.Geod(ellps='WGS84') # Create a Geod object
@@ -57,8 +64,8 @@ def project_vectors(projection, lon, lat, eastward = 1*units('m/s'), northward =
 
     # find vector difference between start and end points
     # this assumes coordinates of projection are units
-    u = np.array([tipx_proj - tailx_proj]) * units('m')
-    v = np.array([tipy_proj - taily_proj]) * units('m')
+    u = np.array([tipx_proj - tailx_proj]) * units(final_units)
+    v = np.array([tipy_proj - taily_proj]) * units(final_units)
     
     tail = (tailx_proj, taily_proj)
     tip = (tipx_proj, tipy_proj)
