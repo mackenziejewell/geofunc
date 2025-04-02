@@ -81,3 +81,62 @@ Latest recorded update:
         print('-->                {:12.1f} sq. km'.format(area/1e6))
     
     return poly
+
+
+def make_geographic_box(bound_lat=[70.5,78], bound_lon=[187,220], num_points = 10):
+    
+    """Create smooth geographic box that smoothly follows parallels and 
+meridians between input corner coordinates.
+
+INPUT: 
+- bound_lat: [South, North] boundaries of box (default: [70.5,78])
+- bound_lon: [West, East] boundaries of box (default: [187,220])
+- num_points: extra points to add between longitude bounds to smooth curves (default: 10)
+
+OUTPUT:
+- box_lons: array of longitude values
+- box_lats: array of latitude values
+
+DEPENDENCIES:
+import numpy as np, numpy.ma as ma
+
+Latest recorded update:
+03-31-2025
+    """
+    
+    
+    # check that BOUND_LAT, BOUND_LON were given with correct shape
+    #*****************************************************
+    assertation_print = f"bound_lat and bound_lon should have shape (1 x 2). "
+    assert len(bound_lat)==2,assertation_print+f"Got bound_lat with length {len(bound_lat)}."
+    assert len(bound_lon)==2,assertation_print+f"Got bound_lon with length {len(bound_lon)}."
+    #*****************************************************
+
+    
+    # make smooth geographic box
+    #---------------------------
+    # initiate straight line along lon0 boundaries from lat0 to lat1
+    box_lons = np.array([bound_lon[0],bound_lon[0]])
+    box_lats = np.array([bound_lat[0],bound_lat[1]])
+    
+    # add num_points steps between lon0 and lon1 along lat1
+    for ii in range(1,num_points+1):
+        box_lons = np.append(box_lons, bound_lon[0]+(ii*(bound_lon[1]-bound_lon[0])/(num_points+1)))
+        box_lats = np.append(box_lats, bound_lat[1])
+        
+    # add extra straight line along lon1 boundaries from lat1 to lat0
+    box_lons = np.append(box_lons,bound_lon[1])
+    box_lons = np.append(box_lons,bound_lon[1])
+    box_lats = np.append(box_lats,bound_lat[1])
+    box_lats = np.append(box_lats,bound_lat[0])
+    
+    # add num_points steps between lon1 and lon0 along lat0
+    for ii in range(1,num_points+1):
+        box_lons = np.append(box_lons, bound_lon[1]+(ii*(bound_lon[0]-bound_lon[1])/(num_points+1)))
+        box_lats = np.append(box_lats,bound_lat[0])
+        
+    # close box at initial point
+    box_lons = np.append(box_lons,bound_lon[0])
+    box_lats = np.append(box_lats,bound_lat[0])
+    
+    return box_lons, box_lats

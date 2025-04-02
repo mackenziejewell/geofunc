@@ -113,6 +113,21 @@ def vector_angle(u, v):
 
     return theta.to('deg')
 
+def turning_angle(v1, v2):
+    
+    """Clockwise turning angle between vector v1=(x1,y1) and v2=(x2,y2)"""
+    
+    x1, y1 = v1
+    x2, y2 = v2
+
+    cross = x1*y2 - x2*y1
+    dot = x1*x2 + y1*y2
+
+    ta = - np.arctan2(cross, dot) * units('rad')
+
+    return ta.to('deg')
+
+
 def comp_along_vector(u1, v1, u2, v2):
     
     """Component of vector [u1, v1] along vector [u2, v2]"""
